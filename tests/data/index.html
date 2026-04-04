@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Card Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        input {
+            display: block;
+            margin: 10px auto;
+            padding: 10px;
+            width: 200px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .card {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #ffeaa7;
+            border: 2px solid #d63031;
+            border-radius: 10px;
+            display: none;
+            position: relative;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #d63031;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Birthday Card Generator</h1>
+        <input type="text" id="name" placeholder="Enter name">
+        <input type="text" id="wish" placeholder="Enter wishing line">
+        <button onclick="generateCard()">Generate Card</button>
+        <div class="card" id="card">
+            <button class="close-btn" onclick="closeCard()">×</button>
+            <h2>Happy Birthday <span id="cardName"></span>!</h2>
+            <p id="cardWish"></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
