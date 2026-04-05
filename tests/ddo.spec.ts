@@ -2,7 +2,16 @@ import { test, expect } from '@playwright/test';
 
 test('birthday card generator', async ({ page }) => {
   test.setTimeout(60000); // 60 second timeout for this test
-  await page.goto('file:///c:/temp/playwright/tests/data/index.html');
+  //await page.goto('file:///c:/temp/playwright/tests/data/index.html');
+  // 1. Get the Absolute Path dynamically
+  // process.cwd() = The root of your project (TestProject)
+  const filePath = path.resolve(process.cwd(), 'tests/data/index.html');
+  
+  // 2. Convert it to a File URL
+  const fileUrl = `file://${filePath}`;
+  
+  // 3. Navigate
+  await page.goto(fileUrl);
 
   // Fill in the name and wish
   await page.fill('#name', 'Johnny');
