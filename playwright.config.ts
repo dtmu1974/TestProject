@@ -12,7 +12,7 @@ export default defineConfig({
 
   use: {
     // Open browser so you can see it
-    headless: false,
+    headless: true,
 
     // Slow down operations for debugging (optional)
     // slowMo: 50, 
