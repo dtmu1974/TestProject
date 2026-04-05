@@ -22,6 +22,8 @@ export default defineConfig({
 
     // Ignore HTTPS errors
     ignoreHTTPSErrors: true,
+	trace: 'on-first-retry',
+	screenshot: 'only-on-failure',
   },
 
   // Reporter (optional, shows results in console)
