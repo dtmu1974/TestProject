@@ -25,7 +25,7 @@ test('birthday card generator', async ({ page }) => {
   await expect(page.locator('#card')).toBeVisible();
 
   // Check the content
-  await expect(page.locator('#cardName')).toHaveText('John');
+  await expect(page.locator('#cardName')).toHaveText('Johnny');
   await expect(page.locator('#cardWish')).toHaveText('Wishing you a fantastic year ahead!');
 
   // Wait a moment before clicking the close button
