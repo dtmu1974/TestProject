@@ -6,8 +6,7 @@ export default defineConfig({
 
   // Run all .ts files, not just *.spec.ts
   //testMatch: '**/*.ts'
-  testMatch: '/.*\.ts/i',
-
+  testMatch: '**/*.ts',
   // Timeout for each test
   timeout: 30 * 1000, // 30 seconds
 
