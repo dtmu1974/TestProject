@@ -15,7 +15,7 @@ test('birthday card generator', async ({ page }) => {
   await page.goto(fileUrl);
 
   // Fill in the name and wish
-  await page.fill('#name', 'Johnny');
+  await page.fill('#name', 'Johnny2');
   await page.fill('#wish', 'Wishing you a fantastic year ahead!');
 
   // Click the generate button
@@ -25,7 +25,7 @@ test('birthday card generator', async ({ page }) => {
   await expect(page.locator('#card')).toBeVisible();
 
   // Check the content
-  await expect(page.locator('#cardName')).toHaveText('Johnny');
+  await expect(page.locator('#cardName')).toHaveText('Johnny2');
   await expect(page.locator('#cardWish')).toHaveText('Wishing you a fantastic year ahead!');
 
   // Wait a moment before clicking the close button
