@@ -27,7 +27,7 @@ export default defineConfig({
   },
 
   // Reporter (optional, shows results in console)
-  reporter: [['list']],
+ reporter: [['list'], ['html', { open: 'never' }]],
 
   // Optional: run tests in parallel
   workers: 1, // set to >1 for multiple parallel tests
