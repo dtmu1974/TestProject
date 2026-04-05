@@ -5,7 +5,7 @@ test('birthday card generator', async ({ page }) => {
   await page.goto('file:///c:/temp/playwright/tests/data/index.html');
 
   // Fill in the name and wish
-  await page.fill('#name', 'John');
+  await page.fill('#name', 'Johnny');
   await page.fill('#wish', 'Wishing you a fantastic year ahead!');
 
   // Click the generate button
