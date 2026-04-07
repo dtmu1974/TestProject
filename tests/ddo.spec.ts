@@ -21,13 +21,14 @@ test('birthday card generator', async ({ page }) => {
   // Click the generate button
   await page.click('button');
 
+  test('Verify text card', async ({ page }) =>
   // Check that the card is displayed
   await expect(page.locator('#card')).toBeVisible();
 
   // Check the content
   await expect(page.locator('#cardName')).toHaveText('Johnny2');
   await expect(page.locator('#cardWish')).toHaveText('Wishing you a fantastic year ahead!');
-
+});
   // Wait a moment before clicking the close button
   await page.waitForTimeout(30000);
   await page.click('.close-btn');
@@ -36,4 +37,3 @@ test('birthday card generator', async ({ page }) => {
   await expect(page.locator('#card')).not.toBeVisible();
 
 
-});
