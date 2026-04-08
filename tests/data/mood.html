@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Mood Helper</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;background:#f7f9fc;display:flex;align-items:center;justify-content:center;height:100vh;margin:0}
+    .card{background:white;padding:24px;border-radius:12px;box-shadow:0 6px 18px rgba(20,30,60,0.08);width:360px;text-align:center}
+    h1{margin:0 0 12px;font-size:20px}
+    .moods{display:flex;gap:12px;justify-content:center;margin:12px 0}
+    .emoji-label{cursor:pointer;padding:6px;border-radius:10px;border:1px solid transparent;display:inline-flex;align-items:center;justify-content:center}
+    .emoji-label input{display:none}
+    .emoji{font-size:32px;display:inline-block;padding:8px}
+    .emoji-label:hover{background:#f1f9ff;border-color:#dbeafe}
+    .emoji-label input:checked + .emoji{box-shadow:0 0 0 4px rgba(37,99,235,0.12);border-radius:8px}
+    button{margin-top:12px;padding:10px 16px;border-radius:8px;border:none;background:#2563eb;color:white;cursor:pointer}
+    #output{margin-top:16px;padding:14px;border-radius:8px;background:#f1f5f9;min-height:60px;color:#dc2626}
+    .message{opacity:0;transform:translateY(12px) scale(0.98);transition:opacity 700ms cubic-bezier(.2,.9,.3,1),transform 700ms cubic-bezier(.2,.9,.3,1)}
+    .message.show{opacity:1;transform:translateY(0) scale(1)}
+    @keyframes bounceIn {
+      0% { transform: translateY(24px) scale(0.92); }
+      60% { transform: translateY(-8px) scale(1.02); }
+      80% { transform: translateY(4px) scale(0.99); }
+      100% { transform: translateY(0) scale(1); }
+    }
+    .message.bounce{animation: bounceIn 800ms cubic-bezier(.2,.9,.3,1)}
+    .meta{margin-top:8px;color:#6b7280;font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>MOOD HELPER</h1>
+    <p>How Do you feel today?</p>
+
+    <div class="moods" role="radiogroup" aria-label="Mood selection">
+      <label class="emoji-label" title="Happy" tabindex="0">
+        <input type="radio" name="mood" value="happy" aria-label="Happy">
+        <span class="emoji">😊</span>
+      </label>
+      <label class="emoji-label" title="Sad" tabindex="0">
+        <input type="radio" name="mood" value="sad" aria-label="Sad">
+        <span class="emoji">😢</span>
+      </label>
+    </div>
+
+
+    <div id="output" aria-live="polite"></div>
+    <div class="meta"></div>
+  </div>
+
+  <script src="mood.js"></script>
+</body>
+</html>

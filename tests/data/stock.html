@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Market Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    body { font-family: Arial; padding: 20px; background: #f5f5f5; }
+    h1 { text-align: center; margin-bottom: 10px; }
+    .tabs { display: flex; gap: 10px; justify-content: center; margin-bottom: 15px; }
+    .tab { padding: 8px 16px; border-radius: 20px; border: 1px solid #ccc; background: #fff; cursor: pointer; font-size: 14px; }
+    .tab.active { background: #007bff; color: #fff; border-color: #007bff; }
+    .info-bar { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; color: #555; }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    th, td { padding: 8px 10px; border-bottom: 1px solid #eee; font-size: 14px; }
+    th { background: #fafafa; cursor: pointer; }
+    tr:hover { background: #f0f8ff; }
+    .positive { color: green; }
+    .negative { color: red; }
+    #chart-container { margin-top: 25px; background: #fff; padding: 15px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    #chart-title { margin-bottom: 10px; font-weight: bold; }
+  </style>
+</head>
+<body>
+
+<h1>Market Dashboard</h1>
+
+<div class="tabs">
+  <div class="tab active" data-type="gainers">Top Gainers</div>
+  <div class="tab" data-type="losers">Top Losers</div>
+  <div class="tab" data-type="actives">Most Active</div>
+</div>
+
+<div class="info-bar">
+  <div id="refreshStatus">Last updated: —</div>
+  <div>Auto-refresh: every 60 seconds</div>
+</div>
+
+<table id="stocksTable">
+  <thead>
+    <tr>
+      <th data-sort="symbol">Symbol</th>
+      <th data-sort="shortName">Name</th>
+      <th data-sort="regularMarketPrice">Price</th>
+      <th data-sort="regularMarketChange">Change</th>
+      <th data-sort="regularMarketChangePercent">% Change</th>
+      <th data-sort="regularMarketVolume">Volume</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<div id="chart-container">
+  <div id="chart-title">Click a stock to view price history</div>
+  <canvas id="priceChart" height="120"></canvas>
+</div>
+
+<script>
+const API_BASE = "http://localhost:3000/api";
+
+const endpoints = {
+  gainers: `${API_BASE}/gainers`,
+  losers: `${API_BASE}/losers`,
+  actives: `${API_BASE}/actives`
+};
+
+let currentType = "gainers";
+let currentData = [];
+let currentSort = { key: null, asc: true };
+let chart;
+
+const tabs = document.querySelectorAll(".tab");
+const tbody = document.querySelector("#stocksTable tbody");
+const refreshStatus = document.getElementById("refreshStatus");
+const chartTitle = document.getElementById("chart-title");
+const ctx = document.getElementById("priceChart").getContext("2d");
+
+tabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    tabs.forEach(t => t.classList.remove("active"));
+    tab.classList.add("active");
+    currentType = tab.dataset.type;
+    fetchAndRender();
+  });
+});
+
+async function fetchAndRender() {
+  try {
+    const res = await fetch(endpoints[currentType]);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const json = await res.json();
+
+    const results = json.finance.result[0].quotes;
+    currentData = results.slice(0, 5);
+
+    applySort();
+    renderTable();
+    refreshStatus.textContent = "Last updated: " + new Date().toLocaleTimeString();
+  } catch (e) {
+    console.error(e);
+    refreshStatus.textContent = "Error fetching data";
+  }
+}
+
+function renderTable() {
+  tbody.innerHTML = "";
+  currentData.forEach(stock => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${stock.symbol}</td>
+      <td>${stock.shortName || "-"}</td>
+      <td>$${stock.regularMarketPrice?.toFixed(2) || "-"}</td>
+      <td class="${stock.regularMarketChange >= 0 ? "positive" : "negative"}">
+        ${stock.regularMarketChange?.toFixed(2)}
+      </td>
+      <td class="${stock.regularMarketChangePercent >= 0 ? "positive" : "negative"}">
+        ${stock.regularMarketChangePercent?.toFixed(2)}%
+      </td>
+      <td>${stock.regularMarketVolume?.toLocaleString() || "-"}</td>
+    `;
+    tr.addEventListener("click", () => loadChart(stock.symbol));
+    tbody.appendChild(tr);
+  });
+}
+
+function applySort() {
+  if (!currentSort.key) return;
+  const { key, asc } = currentSort;
+  currentData.sort((a, b) => {
+    const va = a[key];
+    const vb = b[key];
+    if (!isNaN(va) && !isNaN(vb)) return asc ? va - vb : vb - va;
+    return asc
+      ? String(va).localeCompare(String(vb))
+      : String(vb).localeCompare(String(va));
+  });
+}
+
+document.querySelectorAll("#stocksTable th").forEach(th => {
+  th.addEventListener("click", () => {
+    const key = th.dataset.sort;
+    if (!key) return;
+    if (currentSort.key === key) currentSort.asc = !currentSort.asc;
+    else { currentSort.key = key; currentSort.asc = true; }
+    applySort();
+    renderTable();
+  });
+});
+
+async function loadChart(symbol) {
+  chartTitle.textContent = `Price history for ${symbol}`;
+  try {
+    const res = await fetch(`${API_BASE}/chart/${symbol}`);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    const json = await res.json();
+
+    const result = json.chart.result[0];
+    const timestamps = result.timestamp;
+    const prices = result.indicators.quote[0].close;
+    const labels = timestamps.map(ts => new Date(ts * 1000).toLocaleDateString());
+
+    if (chart) chart.destroy();
+    chart = new Chart(ctx, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [{
+          label: symbol,
+          data: prices,
+          borderColor: "#007bff",
+          backgroundColor: "rgba(0,123,255,0.1)",
+          tension: 0.2,
+          pointRadius: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { ticks: { maxTicksLimit: 8 } },
+          y: { beginAtZero: false }
+        }
+      }
+    });
+  } catch (e) {
+    console.error(e);
+    chartTitle.textContent = `Failed to load chart for ${symbol}`;
+  }
+}
+
+fetchAndRender();
+setInterval(fetchAndRender, 60000);
+</script>
+
+</body>
+</html>

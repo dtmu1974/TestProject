@@ -11,5 +11,24 @@
   "devDependencies": {
     "@playwright/test": "^1.59.1",
     "@types/node": "^25.5.2"
-  }
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "node-fetch": "^3.3.2",
+    "playwright": "^1.59.1",
+    "playwright-core": "^1.59.1",
+    "undici-types": "^7.18.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dtmu1974/TestProject.git"
+  },
+  "bugs": {
+    "url": "https://github.com/dtmu1974/TestProject/issues"
+  },
+  "homepage": "https://github.com/dtmu1974/TestProject#readme"
 }
